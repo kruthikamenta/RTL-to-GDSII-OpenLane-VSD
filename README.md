@@ -204,14 +204,6 @@ Once floorplanning completed successfully, the generated DEF (Design Exchange Fo
 less picorv32a.def
 ```
 
-The DEF file contains important physical design information such as:
-
-- Die area dimensions
-- Placement rows
-- Cell coordinates
-- Routing tracks
-- Floorplan structure
-
 A portion of the generated DEF file is shown below.
 
 ![DEF File](images/floorplan_01.png)
@@ -251,12 +243,6 @@ Magic VLSI was further used to inspect specific standard cells present inside th
 
 Using the `what` command in Magic helped identify the selected physical cell instance and corresponding Sky130 library cell.
 
-This provided practical understanding of:
-
-- Physical implementation of standard cells
-- Decap cell insertion
-- Cell naming conventions in Sky130 libraries
-
 The selected cell inspection result is shown below.
 
 ![Standard Cell Inspection](images/floorplan_04.png)
@@ -270,13 +256,6 @@ After floorplanning, the placement stage was executed.
 ```tcl
 run_placement
 ```
-
-Placement physically arranges synthesized standard cells inside the predefined floorplan area while considering:
-
-- Timing optimization
-- Congestion reduction
-- Utilization constraints
-- Routing feasibility
 
 The OpenLANE placement execution logs are shown below.
 
@@ -297,18 +276,6 @@ Compared to the initial floorplan, the layout now showed:
 The placed layout observed in Magic is shown below.
 
 ![Placement Layout](images/placement_01.png)
-
----
-
-## Observations from Floorplan and Placement
-
-During visualization, several important physical design observations were made:
-
-- Floorplanning primarily defines the physical structure of the chip.
-- Placement introduces actual logic cell distribution inside the core area.
-- Cell density increases significantly after placement.
-- Proper floorplanning directly impacts routing and timing quality.
-- Decap and tap cells are inserted to improve reliability and power integrity.
 
 ---
 
