@@ -112,8 +112,6 @@ ls
 | `1-synthesis_dff.stat` | Flip-flop statistics |
 | `1-synthesis_pre_synth.chk.rpt` | Pre-synthesis checks |
 
-![Synthesis Reports](images/syn_03.png)
-
 ---
 
 ## Synthesis Statistics and Cell Utilization
@@ -125,26 +123,25 @@ The generated synthesis report provides detailed information regarding:
 - Flip-flop count
 - Logic gate distribution
 
-### Important Synthesis Statistics
+## Flip-Flop Ratio Calculation
 
-| Parameter | Value |
-|---|---|
-| Total Cells | 15762 |
-| Total Wires | 15482 |
-| Public Wires | 1475 |
-| Memory Bits | 0 |
-| D Flip-Flops (`dfxtp_2`) | 1613 |
-
-The report also shows the usage count of different standard cells such as:
-- Buffers
-- NAND gates
-- Multiplexers
-- Inverters
-- Flip-flops
-
-This helps in understanding how the RTL design is physically mapped into technology-specific standard cells.
+After synthesis, the flop ratio was calculated using the synthesis statistics report.
 
 ![Cell Utilization Report](images/syn_04.png)
+
+![Synthesis Reports](images/syn_03.png)
+
+```text
+Flop Ratio = (Number of D Flip-Flops / Total Number of Cells)
+
+           = 1613 / 15762
+           ≈ 0.1023  →  ~10.23%
+```
+
+This shows that nearly **10.23%** of the synthesized cells are flip-flops.
+
+
+This helps in understanding how the RTL design is physically mapped into technology-specific standard cells.
 
 ---
 
