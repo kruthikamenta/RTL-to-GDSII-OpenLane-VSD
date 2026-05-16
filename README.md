@@ -37,7 +37,6 @@ The OpenLane environment was initialized by entering the OpenLane directory and 
 cd /home/vscode/Desktop/OpenLane
 make mount
 ./flow.tcl -interactive
-package require openlane 1.0.2
 ```
 
 The following screenshot shows the successful launch of the OpenLane interactive environment.
