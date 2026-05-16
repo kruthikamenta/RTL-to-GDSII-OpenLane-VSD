@@ -2,8 +2,9 @@
 
 ## Digital VLSI SoC Design and Planning - RTL to GDSII
 
-A hands-on workshop on complete RTL-to-GDSII flow for digital VLSI SoC design using OpenLane and Sky130 PDK.  
-This repository documents my learning, lab progress, implementation results and key observations from each day of the VSD SoC Design and Planning Workshop.
+A hands-on workshop on complete RTL-to-GDSII flow for digital VLSI SoC design using OpenLane and Sky130 PDK, organized by VSD (VLSI System Design) in collaboration with NASSCOM.
+
+This repository documents my learning, lab progress, implementation results, layout visualizations and key observations from each day of the VSD SoC Design and Planning Workshop.
 
 ---
 
