@@ -8,7 +8,7 @@ This repository documents my learning, lab progress, implementation results, lay
 
 ---
 
-# Day 1 — Inception of Open-source EDA, OpenLANE and Sky130 PDK
+# Day 1 - Inception of Open-source EDA, OpenLANE and Sky130 PDK
 
 The first day of the workshop introduced the complete open-source RTL-to-GDSII ASIC design methodology using OpenLane and the Sky130 Process Design Kit (PDK).  
 The focus was mainly on understanding the ASIC physical design flow, setting up the OpenLane environment and performing RTL synthesis on the `picorv32a` RISC-V core.
@@ -156,7 +156,7 @@ This helps in understanding how the RTL design is physically mapped into technol
 
 ---
 
-# Day 2 — Good Floorplan vs Bad Floorplan and Introduction to Library Cells
+# Day 2 - Good Floorplan vs Bad Floorplan and Introduction to Library Cells
 
 ## Overview
 
@@ -291,7 +291,7 @@ The placed layout observed in Magic is shown below.
 
 ---
 
-# Day 3 — Design Library Cell using Magic Layout and ngspice Characterization
+# Day 3 - Design Library Cell using Magic Layout and ngspice Characterization
 
 ## Overview
 
@@ -690,12 +690,6 @@ After correcting the layout geometry and validating the updated rules, the layou
 drc why
 ```
 
-Output:
-
-```tcl
-No errors found.
-```
-
 ![Final DRC Clean Layout](images/sky10.png)
 
 ---
@@ -714,13 +708,340 @@ No errors found.
 
 ---
 
-# Conclusion
+# Day 4 - Pre-Layout Timing Analysis and Clock Tree Synthesis
 
-Day 3 provided comprehensive hands-on exposure to custom standard cell design, layout verification and post-layout circuit characterization using open-source VLSI tools.
+## Overview
 
-The lab demonstrated how physical layout directly influences electrical performance, timing behavior and manufacturability in ASIC design.
+Day 4 focused on integrating the custom standard cell into the OpenLANE RTL-to-GDSII flow and performing pre-layout timing analysis.
 
-This session strengthened the understanding of transistor-level layout design, parasitic extraction, DRC verification and technology rule implementation within the Sky130 open-source ASIC flow.
+The lab covered:
+
+- Generation of LEF from custom inverter layout
+- Integration of custom standard cell into OpenLANE
+- Updating OpenLANE configuration files
+- Running synthesis with modified libraries
+- Floorplanning and placement analysis
+- Clock Tree Synthesis (CTS)
+- Timing optimization and routing visualization
+
+This session demonstrated how custom standard cells are integrated into an ASIC physical design flow using OpenLANE and Sky130 PDK.
 
 ---
+
+## Viewing Track Information for Standard Cell Alignment
+
+The routing track information for the Sky130 standard cell library was examined.
+
+This helped in understanding:
+
+- Metal layer pitch
+- Horizontal and vertical routing tracks
+- Standard cell pin alignment
+
+The routing track details are shown below.
+
+![Track Information](images/Day4(1).png)
+
+---
+
+## Generating LEF from Custom Inverter Layout
+
+The custom inverter layout `sky130_vsdinv.mag` was opened inside Magic and converted into LEF format.
+
+```tcl
+lef write
+```
+
+The generated LEF file:
+
+```bash
+sky130_vsdinv.lef
+```
+
+contained:
+
+- Cell dimensions
+- Pin definitions
+- Obstruction layers
+- Routing blockages
+
+![LEF Generation](images/Day4(2).png)
+
+---
+
+## Verifying Generated LEF File
+
+The generated LEF file was verified inside the working directory.
+
+```bash
+less sky130_vsdinv.lef
+```
+
+The LEF file was then prepared for integration into the OpenLANE design flow.
+
+![LEF Verification](images/Day4(3).png)
+
+---
+
+## Updating OpenLANE Configuration
+
+The OpenLANE configuration file for `picorv32a` was updated to include:
+
+- Custom inverter LEF
+- Timing libraries
+- Synthesis configuration
+- Floorplan utilization parameters
+
+The configuration file modifications are shown below.
+
+![Configuration Update](images/Day4(4).png)
+
+---
+
+## Running OpenLANE with Custom Standard Cell
+
+OpenLANE interactive mode was launched and the custom inverter LEF was added to the design flow.
+
+```tcl
+prep -design picorv32a -tag RUN_2026.05.18_12.46.21 -overwrite
+set lefs [glob $::env(DESIGN_DIR)/src/*.lef]
+add_lefs -src $lefs
+run_synthesis
+```
+
+The synthesis process successfully integrated the custom inverter cell into the design.
+
+![Custom Cell Synthesis](images/cts.png)
+
+---
+
+## Timing Optimization during Synthesis
+
+Synthesis optimization parameters were modified to improve timing performance.
+
+The following parameters were updated:
+
+```tcl
+set ::env(SYNTH_STRATEGY) 1
+set ::env(SYNTH_SIZING) 1
+```
+
+The driving cell configuration was also verified.
+
+```tcl
+echo $::env(SYNTH_DRIVING_CELL)
+```
+
+The updated synthesis execution is shown below.
+
+![Synthesis Optimization](images/cts1.png)
+
+---
+
+## Running Floorplan and Placement
+
+After successful synthesis, floorplanning and placement stages were executed.
+
+The design was loaded into Magic for visualization after placement.
+
+The placed standard cells and optimized cell rows were observed successfully.
+
+![Placement Visualization](images/Day4(7).png)
+
+---
+
+## Verifying Custom Inverter Integration
+
+The final placement layout was inspected inside Magic VLSI.
+
+The custom inverter cell `sky130_vsdinv` was successfully integrated into the `picorv32a` design layout.
+
+The inserted custom cell instance is highlighted below.
+
+![Custom Cell Placement](images/Day4(8).png)
+
+---
+
+## Clock Tree Synthesis (CTS)
+
+Clock Tree Synthesis was performed to distribute the clock signal uniformly across the design.
+
+CTS helps in reducing:
+
+- Clock skew
+- Clock latency
+- Timing uncertainty
+
+The CTS stage inserted clock buffers and optimized clock distribution paths throughout the design.
+
+---
+
+## Timing Verification after CTS
+
+Timing analysis was performed after Clock Tree Synthesis to verify setup and hold timing constraints.
+
+The analysis ensured:
+
+- Balanced clock distribution
+- Reduced timing violations
+- Improved signal synchronization
+- Stable timing performance across the design
+
+This stage is critical before proceeding to the final routing and signoff stages.
+
+---
+
+## Key Learnings from Day 4
+
+- Learned how to generate LEF files from custom layouts
+- Understood standard cell integration into OpenLANE
+- Modified OpenLANE configuration files
+- Performed synthesis with custom standard cells
+- Explored timing optimization strategies
+- Visualized placement using Magic VLSI
+- Understood Clock Tree Synthesis concepts
+- Learned timing verification flow after CTS
+- Observed physical implementation of custom cells inside ASIC layouts
+
+---
+
+# Day 5 - Final RTL to GDSII using TritonRoute & OpenSTA
+
+## Overview
+
+Day 5 focused on the final stages of the RTL-to-GDSII ASIC physical design flow using OpenLANE.
+
+The session covered:
+
+- Global and detailed routing
+- Physical connectivity generation
+- Post-routing layout verification
+- Final layout visualization using Magic VLSI
+- Timing verification using OpenSTA
+- Understanding routed standard cell interconnections
+- Completing the RTL-to-GDSII flow successfully
+
+---
+
+## Running Routing Stage
+
+After successful Clock Tree Synthesis (CTS), the routing stage was executed using TritonRoute.
+
+Routing establishes all physical interconnections between standard cells using different metal layers available in the Sky130 PDK.
+
+The routing stage performs:
+
+- Global routing
+- Detailed routing
+- Via insertion
+- Design Rule Check (DRC) aware routing
+- Signal connectivity optimization
+
+---
+
+## Final Routed Layout Visualization
+
+The routed DEF file was loaded into Magic VLSI for visualization.
+
+The complete routed layout of the `picorv32a` design was successfully generated.
+
+The layout below shows the final physical implementation after routing.
+
+![Final Routed Layout](images/rout.png)
+
+---
+
+## Inspecting Routed Standard Cells
+
+The routed layout was zoomed further to inspect:
+
+- Standard cell connectivity
+- Metal routing tracks
+- Power rails
+- Filler cells
+- Decap cells
+- Signal interconnections
+
+This helped in understanding how routing physically connects all synthesized logic gates.
+
+![Routed Standard Cell Connections](images/rout1.png)
+
+---
+
+## Timing Analysis using OpenSTA
+
+Static Timing Analysis (STA) was performed after routing using OpenSTA.
+
+The timing analysis verified:
+
+- Setup timing constraints
+- Hold timing constraints
+- Clock propagation delays
+- Signal transition timing
+- Timing closure after routing
+
+Post-routing timing verification ensured that the final ASIC layout met required timing specifications.
+
+---
+
+## Key Learnings from Day 5
+
+- Understood TritonRoute-based routing flow
+- Learned global and detailed routing concepts
+- Visualized routed layouts using Magic VLSI
+- Explored metal routing layers and vias
+- Understood filler and decap cell placement
+- Learned post-routing timing verification
+- Performed final RTL-to-GDSII physical design flow
+- Observed complete ASIC implementation using OpenLANE
+
+---
+
+# Conclusion
+
+The complete five-day RTL-to-GDSII workshop provided practical exposure to the entire open-source ASIC physical design flow using OpenLANE, Magic VLSI, ngspice and Sky130 PDK.
+
+Throughout the workshop, the following major concepts were explored:
+
+- RTL synthesis using OpenLANE
+- Floorplanning and placement
+- Standard cell design and characterization
+- DRC verification using Magic
+- SPICE extraction and ngspice simulation
+- Custom inverter cell integration
+- Clock Tree Synthesis (CTS)
+- Static Timing Analysis (STA)
+- Routing using TritonRoute
+- Final routed GDSII layout visualization
+
+The workshop successfully demonstrated how open-source EDA tools can be used to implement a complete ASIC design flow from RTL specification to final physical layout generation.
+
+This hands-on learning experience significantly improved understanding of VLSI physical design methodologies, custom standard cell integration and modern ASIC implementation flows.
+
+---
+
+# Acknowledgements
+
+A huge thank you to **Kunal Ghosh** (Co-founder, VSD Corp. Pvt. Ltd.) and **Nickson P Jose** (Physical Design Engineer, Intel) for organizing such a practical and industry-oriented workshop on open-source ASIC design.
+
+Special thanks to:
+
+- **Kunal Ghosh** — Co-founder, VSD (VLSI System Design)
+- **Nickson Jose** — for the `vsdstdcelldesign` repository and Day 3 custom cell design labs
+- **NASSCOM** — for facilitating and supporting this workshop initiative
+
+The workshop provided valuable practical exposure to the complete RTL-to-GDSII ASIC design flow using open-source EDA tools.
+
+---
+
+# References
+
+- [VSD SoC Design Workshop](https://www.vlsisystemdesign.com/)
+- [OpenLANE GitHub](https://github.com/The-OpenROAD-Project/OpenLane)
+- [SkyWater SKY130 PDK](https://skywater-pdk.readthedocs.io/en/main/)
+- [OpenROAD Project](https://theopenroadproject.org/)
+- [Magic VLSI Layout Tool](http://opencircuitdesign.com/magic/)
+- [Ngspice Simulator](https://ngspice.sourceforge.io/)
+- [vsdstdcelldesign Repository](https://github.com/nickson-jose/vsdstdcelldesign)
+
 
